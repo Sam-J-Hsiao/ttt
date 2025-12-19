@@ -2,8 +2,8 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iNCCU 行動校務系統 - 平板優化版</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>iNCCU 行動校務系統 - 全裝置通用版</title>
     <style>
         :root {
             --nccu-blue: #1B315E;
@@ -12,7 +12,7 @@
             --card-bg: #FFFFFF;
             --text-main: #333333;
             --text-light: #666666;
-            --shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow: 0 4px 12px rgba(0,0,0,0.06);
             --radius: 16px;
         }
 
@@ -21,74 +21,110 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans TC", sans-serif;
+            -webkit-tap-highlight-color: transparent; /* 移除點擊時的藍色高光 */
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
-            padding-bottom: 40px;
+            padding-bottom: 60px; /* 底部留白 */
         }
 
-        /* 頂部導航列 */
+        /* --------------------------------------
+           Header 區域 (響應式調整)
+           -------------------------------------- */
         header {
             background-color: var(--nccu-blue);
             color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 1rem 1.5rem;
             position: sticky;
             top: 0;
             z-index: 100;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap; /* 允許手機版換行 */
+            gap: 10px;
+        }
+
         .brand {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: bold;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .user-profile {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             text-align: right;
         }
 
+        .user-info {
+            font-size: 0.9rem;
+        }
+
+        .user-subtext {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            display: block;
+        }
+
         .btn-logout {
-            background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
             color: white;
-            padding: 8px 20px;
+            padding: 6px 14px;
             border-radius: 20px;
             cursor: pointer;
-            font-size: 0.9rem;
-            white-space: nowrap; /* 防止按鈕文字換行 */
+            font-size: 0.85rem;
         }
 
-        /* 關鍵修復：使用 Auto-Fit + Minmax 
-           這會確保每個欄位至少有 350px 寬，空間不夠會自動換行，
-           絕對不會發生文字擠成直排的情況。
-        */
+        /* --------------------------------------
+           Grid 佈局系統 (核心響應式邏輯)
+           -------------------------------------- */
         .container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); 
-            gap: 24px;
-            padding: 24px;
+            gap: 20px;
+            padding: 20px;
             max-width: 1400px;
             margin: 0 auto;
+            
+            /* 預設：手機版 (單欄) */
+            grid-template-columns: 1fr;
         }
 
-        /* 卡片樣式 */
+        /* 平板直向 (Tablet Portrait): 雙欄 */
+        @media (min-width: 768px) {
+            .container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* 電腦/平板橫向 (Desktop/Landscape): 三欄 */
+        @media (min-width: 1024px) {
+            .container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* --------------------------------------
+           卡片組件 (Card UI)
+           -------------------------------------- */
         .card {
             background: var(--card-bg);
             border-radius: var(--radius);
-            padding: 24px;
+            padding: 20px;
             box-shadow: var(--shadow);
-            height: 100%; /* 讓同一列卡片等高 */
+            height: 100%; /* 讓並排的卡片等高 */
             display: flex;
             flex-direction: column;
             border: 1px solid rgba(0,0,0,0.02);
@@ -98,24 +134,39 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 12px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
             border-bottom: 1px solid #f0f0f0;
         }
 
         .card-title {
-            font-size: 1.2rem;
-            font-weight: bold;
+            font-size: 1.1rem;
+            font-weight: 700;
             color: var(--nccu-blue);
-            white-space: nowrap; /* 防止標題換行 */
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        /* APP 圖示網格 */
+        .card-link {
+            color: #999;
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+
+        /* --------------------------------------
+           APP icon 網格
+           -------------------------------------- */
         .app-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr); /* 強制每行4個 */
-            gap: 12px;
+            grid-template-columns: repeat(4, 1fr); /* 手機預設4個一排 */
+            gap: 10px;
             text-align: center;
+        }
+
+        /* 在超小手機上改為3個一排，避免擁擠 */
+        @media (max-width: 360px) {
+            .app-grid { grid-template-columns: repeat(3, 1fr); }
         }
 
         .app-icon {
@@ -124,31 +175,36 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            padding: 5px;
+            border-radius: 8px;
+            transition: background 0.2s;
         }
 
+        .app-icon:active { background-color: #f5f5f5; }
+
         .icon-box {
-            width: 56px;
-            height: 56px;
+            width: 50px;
+            height: 50px;
             background: #EBF2FA;
             border-radius: 14px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.6rem;
-            margin-bottom: 8px;
-            transition: transform 0.1s;
+            font-size: 1.5rem;
+            margin-bottom: 6px;
+            color: var(--nccu-blue);
         }
-        
-        .app-icon:active .icon-box { transform: scale(0.95); }
 
         .app-name { 
-            font-size: 0.85rem; 
-            line-height: 1.3;
-            height: 2.6em; /* 固定高度防止對齊跑掉 */
+            font-size: 0.8rem; 
+            line-height: 1.25;
+            height: 2.5em; /* 限制兩行高度 */
             overflow: hidden;
         }
 
-        /* 列表與通知 */
+        /* --------------------------------------
+           通知列表與新聞
+           -------------------------------------- */
         .list-container {
             flex: 1;
             overflow-y: auto;
@@ -157,54 +213,82 @@
         .notif-item {
             background: #FFFBF5;
             border-left: 4px solid var(--nccu-gold);
-            padding: 12px 16px;
+            padding: 10px 14px;
             border-radius: 6px;
             margin-bottom: 10px;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             line-height: 1.5;
         }
         
         .notif-date {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #888;
             display: block;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
-        /* 行事曆表格 */
+        .news-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .news-item::before {
+            content: "•";
+            color: var(--nccu-blue);
+            font-weight: bold;
+        }
+
+        /* --------------------------------------
+           行事曆表格
+           -------------------------------------- */
+        .calendar-wrapper {
+            overflow-x: auto; /* 手機版表格若太寬可滑動 */
+        }
+
         .calendar-table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 250px; /* 最小寬度防止壓縮 */
         }
+
         .calendar-table td {
-            padding: 12px 8px;
+            padding: 10px 5px;
             border-bottom: 1px solid #eee;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
+
         .date-badge {
             background: #EBF2FA;
             color: var(--nccu-blue);
-            padding: 4px 8px;
-            border-radius: 6px;
+            padding: 3px 6px;
+            border-radius: 4px;
             font-weight: 600;
-            font-size: 0.85rem;
-            margin-right: 8px;
+            font-size: 0.8rem;
             white-space: nowrap;
         }
 
-        /* 搜尋與按鈕 */
+        /* --------------------------------------
+           搜尋區域 (手機優化)
+           -------------------------------------- */
         .search-area {
             display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap; /* 手機版換行 */
         }
         
         input, select {
-            padding: 12px;
+            padding: 10px;
             border: 1px solid #ddd;
             border-radius: 8px;
             background: white;
-            font-size: 1rem;
+            font-size: 0.95rem;
+            flex: 1; /* 自動填滿空間 */
+            min-width: 120px; /* 最小寬度 */
         }
         
         .btn-primary {
@@ -217,32 +301,37 @@
             text-align: center;
             cursor: pointer;
             width: 100%;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+        
+        .btn-primary:active { background: #142446; }
+
+        /* 手機版特別調整 Header */
+        @media (max-width: 480px) {
+            .header-content {
+                flex-direction: row; /* 保持橫向 */
+            }
+            .user-info { display: none; } /* 手機隱藏名字，只留按鈕 */
+            .user-subtext { display: none; }
         }
 
-        .news-item {
-            padding: 12px 0;
-            border-bottom: 1px solid #f0f0f0;
-            line-height: 1.5;
-        }
-
-        /* 平板橫向優化 */
-        @media (min-width: 1024px) {
-           /* 當螢幕夠寬時，可以微調佈局 */
-        }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="brand">
-        🏫 iNCCU 愛政大
-    </div>
-    <div class="user-profile">
-        <div>
-            <div style="font-weight:bold;">蕭家浩 (HSIAO CHIA HAO)</div>
-            <div style="font-size: 0.8rem; opacity: 0.8;">早安，今天也要加油！</div>
+    <div class="header-content">
+        <div class="brand">
+            🏫 iNCCU 愛政大
         </div>
-        <button class="btn-logout">登出</button>
+        <div class="user-profile">
+            <div>
+                <div class="user-info">蕭家浩</div>
+                <span class="user-subtext">早安！</span>
+            </div>
+            <button class="btn-logout">登出</button>
+        </div>
     </div>
 </header>
 
@@ -250,9 +339,10 @@
 
     <div class="card">
         <div class="card-header">
-            <div class="card-title">⭐ 我的常用系統</div>
-            <a href="#" style="color: #999; text-decoration: none; font-size:0.9rem;">編輯</a>
+            <div class="card-title">⭐ 常用系統</div>
+            <a href="#" class="card-link">編輯</a>
         </div>
+        
         <div class="app-grid">
             <a href="#" class="app-icon"><div class="icon-box">📊</div><div class="app-name">成績查詢</div></a>
             <a href="#" class="app-icon"><div class="icon-box">📅</div><div class="app-name">重要會議</div></a>
@@ -264,8 +354,8 @@
             <a href="#" class="app-icon"><div class="icon-box">➕</div><div class="app-name">更多</div></a>
         </div>
 
-        <div class="card-header" style="margin-top: 30px;">
-            <div class="card-title">📱 校園資訊系統</div>
+        <div class="card-header" style="margin-top: 25px;">
+            <div class="card-title">📱 資訊系統</div>
         </div>
         <div class="app-grid">
             <a href="#" class="app-icon"><div class="icon-box">📚</div><div class="app-name">圖書館</div></a>
@@ -278,7 +368,7 @@
     <div class="card">
         <div class="card-header">
             <div class="card-title">🔔 個人訊息 (6)</div>
-            <a href="#" style="color: #999; text-decoration: none; font-size:0.9rem;">全部</a>
+            <a href="#" class="card-link">全部</a>
         </div>
         <div class="list-container">
             <div class="notif-item">
@@ -298,47 +388,46 @@
         <div class="card-header" style="margin-top: 20px;">
             <div class="card-title">🗓️ 12月行事曆</div>
         </div>
-        <table class="calendar-table">
-            <tr><td><span class="date-badge">12/01</span></td><td>第2次教務會議</td></tr>
-            <tr><td><span class="date-badge">12/07</span></td><td>校園馬拉松 (交管)</td></tr>
-            <tr><td><span class="date-badge">12/12</span></td><td style="color:#E74C3C">休學申請截止日</td></tr>
-            <tr><td><span class="date-badge">12/25</span></td><td>行憲紀念日</td></tr>
-        </table>
+        <div class="calendar-wrapper">
+            <table class="calendar-table">
+                <tr><td><span class="date-badge">12/01</span></td><td>第2次教務會議</td></tr>
+                <tr><td><span class="date-badge">12/07</span></td><td>校園馬拉松 (交管)</td></tr>
+                <tr><td><span class="date-badge">12/12</span></td><td style="color:#E74C3C">休學申請截止日</td></tr>
+                <tr><td><span class="date-badge">12/25</span></td><td>行憲紀念日</td></tr>
+            </table>
+        </div>
     </div>
 
     <div class="card">
         <div class="card-header">
             <div class="card-title">📰 校園新聞</div>
             <div style="display:flex; gap:10px;">
-                <span style="color:var(--nccu-blue); font-weight:bold;">新聞</span>
-                <span style="color:#ccc;">公告</span>
+                <span style="font-size:0.85rem; color:var(--nccu-blue); font-weight:bold;">新聞</span>
+                <span style="font-size:0.85rem; color:#ccc;">公告</span>
             </div>
         </div>
-        <div class="list-container" style="max-height: 250px;">
+        <div class="list-container" style="max-height: 300px;">
             <div class="news-item">政大出版社多本專書獲肯定 展現人社研究厚實能量</div>
             <div class="news-item">全創碩深化媒體素養：澳洲學者談新聞變局</div>
             <div class="news-item">「金英講座」成果發表會 培育下一代金融菁英</div>
             <div class="news-item">國關論壇：談臺灣對拉美的援助與挑戰</div>
+            <div class="news-item">謝發達大使暢談如何與新加坡按部就班成功協商</div>
         </div>
 
         <div class="card-header" style="margin-top: 20px;">
             <div class="card-title">🔍 館藏查詢</div>
         </div>
         <div class="search-area">
-            <input type="text" placeholder="輸入書名關鍵字..." style="flex:1;">
+            <input type="text" placeholder="輸入書名關鍵字...">
         </div>
         <div class="search-area">
-            <select style="flex:1"><option>不限類型</option><option>圖書</option></select>
-            <select style="flex:1"><option>總圖書館</option><option>商圖</option></select>
+            <select><option>不限類型</option><option>圖書</option><option>期刊</option></select>
+            <select><option>總圖書館</option><option>商圖</option><option>傳圖</option></select>
         </div>
         <button class="btn-primary">搜尋</button>
     </div>
 
 </main>
-
-<div style="text-align: center; color: #999; font-size: 0.8rem; padding: 20px;">
-    © National Chengchi University
-</div>
 
 </body>
 </html>
